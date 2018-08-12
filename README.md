@@ -1,6 +1,8 @@
 # Is This Colour Similar
 Javascript implementation of CIE Delta E 2000 Color-Difference algorithm (CIEDE2000) as per the equation provided on this website http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html
 
+Live Demo https://hamada147.github.io/IsThisColourSimilar/
+
 # What is that?
 Let me just say that there are two version of the story behing the creation of this library. Short and Long.
 
@@ -252,9 +254,9 @@ Simple include the Colour.js file into your web page in head tag. Take two colou
 
 # TODO
 
-Create and usage example
+Create and usage example DONE
 
-Create an online public web page where user choose the two colours and see the delta E value on the screen
+Create an online public web page where user choose the two colours and see the delta E value on the screen DONE
 
 Create a function to send that takes a HEX colour value and it will get a lighter version of this colour
 
