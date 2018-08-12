@@ -15,9 +15,9 @@ class Colour {
    * @param {[string]} hex hex colour value desired to be converted to LAB
    */
   static HEX2LAB(hex) {
-  	const [R, G, b, a] = color.HEX2RGBA(hex);
-    const [X, Y, Z] = color.RGB2XYZ(R, G, b, a);
-    const [L, A, B] = color.XYZ2LAB(X, Y, Z);
+  	const [R, G, b, a] = Colour.HEX2RGBA(hex);
+    const [X, Y, Z] = Colour.RGB2XYZ(R, G, b, a);
+    const [L, A, B] = Colour.XYZ2LAB(X, Y, Z);
     return [L, A, B];
   }
   /**
