@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Colour Difference</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style media="screen">
+            html,
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            h1 {
+                text-align: center;
+            }
+            .flex-column {
+                display: flex;
+                flex-direction: column;
+            }
+            .flex-column > div {
+                width: 100%;
+            }
+            .flex-column > div > button {
+                width: 100%;
+                font-size: 30px;
+            }
+            .min-height-200 {
+                min-height: 200px;
+            }
+            .min-height-80 {
+                min-height: 80px;
+            }
+            #log {
+                display: flex;
+                flex-direction: column;
+            }
+            #log > ol > li.c1 {
+                color: black;
+            }
+            #log > ol > li.c2 {
+                color: orange;
+            }
+            #log > ol > li.result {
+                color: darkgreen;
+            }
+            table {
+    			font-family: arial, sans-serif;
+    			border-collapse: collapse;
+    			width: 100%;
+    		}
+    		td, th {
+    			border: 1px solid #dddddd;
+    			text-align: left;
+    			padding: 8px;
+    		}
+    		tr:nth-child(even) {
+    			background-color: #dddddd;
+    		}
+        </style>
+        <script src="Colour.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <header>
+            <h1>Colour Difference</h1>
+        </header>
+        <main>
+            <section class="flex-column">
+                <div>
+                    Kindly Find below table for your reference
+                    <table>
+                		<thead>
+                			<tr>
+                				<th>Delta E Value</th>
+                				<th>Meaning</th>
+                			</tr>
+                		</thead>
+                        <tbody>
+                            <tr>
+                                <td><= 1.0</td>
+                                <td>Not perceptible by human eyes.</td>
+                            </tr>
+                            <tr>
+                                <td>1 - 2</td>
+                                <td>Perceptible through close observation.</td>
+                            </tr>
+                            <tr>
+                                <td>2 - 10</td>
+                                <td>Perceptible at a glance.</td>
+                            </tr>
+                            <tr>
+                                <td>11 - 49</td>
+                                <td>Colors are more similar than opposite.</td>
+                            </tr>
+                            <tr>
+                                <td>100</td>
+                                <td>Colors are exact opposite.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <label for="first-colour">First Colour</label>
+                    <input type="color" id="first-colour" name="first-colour" placeholder="first colour" value="#FFFFFF"/>
+                </div>
+                <div>
+                    <label for="second-colour">Second Colour</label>
+                    <input type="color" id="second-colour" name="second-colour" placeholder="second colour" value="#FFFFFF"/>
+                </div>
+                <div>
+                    <button type="button" id="Compare" name="Compare">Compare</button>
+                </div>
+            </section>
+            <section class="flex-column">
+                <div id="fcolour" class="first-colour min-height-80">
+
+                </div>
+                <div id="scolour" class="second-colour min-height-80">
+
+                </div>
+            </section>
+            <section id="log">
+                <ol></ol>
+            </section>
+        </main>
+        <footer>
+
+        </footer>
+        <script type="text/javascript">
+            'use strict';
+            // Values
+            let FirstColourInHEX, SecondColourInHEX;
+            // Elements
+            let FirstColourElement, SecondColourElement;
+            let FirstColourShowElement, SecondColourShowElement;
+            let logElement;
+            let compareButton;
+
+            window.onload = function() {
+                // init elements
+                FirstColourElement      = document.getElementById("first-colour");
+                FirstColourShowElement  = document.getElementById("fcolour");
+                SecondColourElement     = document.getElementById("second-colour");
+                SecondColourShowElement = document.getElementById("scolour");
+                // init compare button
+                compareButton = document.getElementById("Compare");
+                // log element
+                logElement = document.getElementById("log").children[0];
+                // init the default value for element, variables and show element
+                FirstColourInHEX = FirstColourElement.value;
+                SecondColourInHEX = SecondColourElement.value;
+                // init the on change value functions
+                FirstColourElement.onchange = function() {
+                    FirstColourInHEX = this.value;
+                    FirstColourShowElement.style.backgroundColor = this.value;
+                };
+                SecondColourElement.onchange = function() {
+                    SecondColourInHEX = this.value;
+                    SecondColourShowElement.style.backgroundColor = this.value;
+                };
+                // init on click
+                compareButton.addEventListener("click", function() {
+                    // convert HEX to LAB
+                    const [L1, A1, B1] = Colour.HEX2LAB(FirstColourInHEX, 1);
+                    const [L2, A2, B2] = Colour.HEX2LAB(SecondColourInHEX, 2);
+                    const deltaE = Colour.DeltaE00(L1, A1, B1, L2, A2, B2);
+                    logElement.innerHTML += `<li class="result">DetlaE00: ${deltaE}</li>`;
+                });
+            };
+        </script>
+    </body>
+</html>
