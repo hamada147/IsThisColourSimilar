@@ -1,4 +1,4 @@
-# IsThisColourSimilar
+# Is This Colour Similar
 Javascript implementation of CIE Delta E 2000 Color-Difference algorithm (CIEDE2000) as per the equation provided on this website http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html
 
 # What is that?
@@ -249,3 +249,13 @@ The CIE organization decided to fix the lightness inaccuracies by introducing dE
 # How to use
 
 Simple include the Colour.js file into your web page in head tag. Take two colour from the manully or auto generated. Convert them to LAB then run the deltaE00 function and see the result then check the table for understanding the meaning behind the given value.
+
+# TODO
+
+Create and usage example
+
+Create an online public web page where user choose the two colours and see the delta E value on the screen
+
+Create a function to send that takes a HEX colour value and it will get a lighter version of this colour
+
+Create a function to send that takes a HEX colour value and it will get a darker version of this colour
