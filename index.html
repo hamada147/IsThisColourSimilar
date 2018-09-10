@@ -109,6 +109,17 @@
                 <div>
                     <button type="button" id="Compare" name="Compare">Compare</button>
                 </div>
+                <!-- get darker colour -->
+                <div>
+                    <label for="get-darker-colour">Get Darker colour of this colour</label>
+                    <input type="color" id="get-darker-colour" name="colour" placeholder="colour" value="#000000"/>
+                </div>
+                <div>
+                    <button type="button" id="getDarkerColour" name="getDarkerColour">Get Darker Colour</button>
+                </div>
+                <div>
+                    <button type="button" id="getBrighterColour" name="getBrighterColour">Get Brighter Colour</button>
+                </div>
             </section>
             <section class="flex-column">
                 <div id="fcolour" class="first-colour min-height-80">
@@ -135,16 +146,54 @@
             let logElement;
             let compareButton;
 
+            // new feature
+            let getDarkerColourButton;
+            let getBrighterColourButton;
+            let getDarkerColourColor;
+
             window.onload = function() {
+                init();
+                compareFeature();
+                getDarkerColourFeature();
+                getBrighterColourFeature();
+            };
+
+            function init() {
                 // init elements
                 FirstColourElement      = document.getElementById("first-colour");
                 FirstColourShowElement  = document.getElementById("fcolour");
                 SecondColourElement     = document.getElementById("second-colour");
                 SecondColourShowElement = document.getElementById("scolour");
+                getDarkerColourColor    = document.getElementById("get-darker-colour");
                 // init compare button
                 compareButton = document.getElementById("Compare");
+                // init darket colour button
+                getDarkerColourButton = document.getElementById("getDarkerColour");
+                // init brighter colour button
+                getBrighterColourButton = document.getElementById("getBrighterColour");
                 // log element
                 logElement = document.getElementById("log").children[0];
+            }
+
+            function getDarkerColourFeature() {
+                getDarkerColourButton.addEventListener("click", function() {
+                    FirstColourShowElement.style.backgroundColor = getDarkerColourColor.value;
+                    let [R1, G1, B1, A1] = Colour.HEX2RGBA(getDarkerColourColor.value);
+                    let [R2, G2, B2, A2] = Colour.GetDarkerColour(R1, G1, B1, A1);
+                    SecondColourShowElement.style.backgroundColor = `rgba(${R2}, ${G2}, ${B2}, ${A2})`;
+                });
+            }
+
+            function getBrighterColourFeature() {
+                getBrighterColourButton.addEventListener("click", function(){
+                    FirstColourShowElement.style.backgroundColor = getDarkerColourColor.value;
+                    let [R1, G1, B1, A1] = Colour.HEX2RGBA(getDarkerColourColor.value);
+                    let [R2, G2, B2, A2] = Colour.GetBrighterColour(R1, G1, B1, A1);
+                    SecondColourShowElement.style.backgroundColor = `rgba(${R2}, ${G2}, ${B2}, ${A2})`;
+                });
+            }
+
+            function compareFeature() {
                 // init the default value for element, variables and show element
                 FirstColourInHEX = FirstColourElement.value;
                 SecondColourInHEX = SecondColourElement.value;
@@ -165,7 +214,7 @@
                     const deltaE = Colour.DeltaE00(L1, A1, B1, L2, A2, B2);
                     logElement.innerHTML += `<li class="result">DetlaE00: ${deltaE}</li>`;
                 });
-            };
+            }
         </script>
     </body>
 </html>
