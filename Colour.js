@@ -7,9 +7,9 @@
  * 3. Convert XYZ to LAB
  * 4. Calculate Delta E00 between two LAB colour (Main purpose)
  * @author Ahmed Moussa <moussa.ahmed95@gmail.com>
- * @version 1.5
+ * @version 1.7
  */
-class Colour {
+ class Colour {
 	/**
 	 * Convert HEX to LAB
 	 * @param {[string]} hex hex colour value desired to be converted to LAB
@@ -124,9 +124,9 @@ class Colour {
 		g = g * 100;
 		b = b * 100;
 		// step 3
-		const X = (r * 0.4124) + (g * 0.3576) + (b * 0.1805);
-		const Y = (r * 0.2126) + (g * 0.7152) + (b * 0.0722);
-		const Z = (r * 0.0193) + (g * 0.1192) + (b * 0.9505);
+		const X = (r * 0.4124564) + (g * 0.3575761) + (b * 0.1804375);
+		const Y = (r * 0.2126729) + (g * 0.7151522) + (b * 0.0721750);
+		const Z = (r * 0.0193339) + (g * 0.1191920) + (b * 0.9503041);
 		return [X, Y, Z];
 	}
 	/**
@@ -140,9 +140,9 @@ class Colour {
 		let var_Y = Y / 100;
 		let var_Z = Z / 100;
 
-		let var_R = (var_X *  3.2406) + (var_Y * -1.5372) + (var_Z * -0.4986);
-		let var_G = (var_X * -0.9689) + (var_Y *  1.8758) + (var_Z *  0.0415);
-		let var_B = (var_X *  0.0557) + (var_Y * -0.2040) + (var_Z *  1.0570);
+		let var_R = (var_X *  3.2404542) + (var_Y * -1.5371385) + (var_Z * -0.4985314);
+		let var_G = (var_X * -0.9692660) + (var_Y *  1.8760108) + (var_Z * 0.0415560);
+		let var_B = (var_X *  0.0556434) + (var_Y * -0.2040259) + (var_Z * 1.0572252);
 
 		if ( var_R > 0.0031308 ) {
 			var_R = 1.055 * Math.pow(var_R, (1 / 2.4) ) - 0.055;
