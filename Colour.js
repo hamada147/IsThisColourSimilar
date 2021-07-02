@@ -54,7 +54,7 @@
 		if (c.length === 3) {
 			c = [c[0], c[0], c[1], c[1], c[2], c[2]];
 		}
-		c = "0x" + c.join('');
+		c = "0x" + c.join("");
 		let r = (c >> 16) & 255;
 		let g = (c >> 8) & 255;
 		let b = c & 255;
@@ -70,31 +70,31 @@
 	 */
 	static rgb2xyz(r, g, b, a = 1) {
 		if (r > 255) {
-			console.warn("Red value was higher than 255. It has been set to 255.");
+			// console.warn("Red value was higher than 255. It has been set to 255.");
 			r = 255;
 		} else if (r < 0) {
-			console.warn("Red value was smaller than 0. It has been set to 0.");
+			// console.warn("Red value was smaller than 0. It has been set to 0.");
 			r = 0;
 		}
 		if (g > 255) {
-			console.warn("Green value was higher than 255. It has been set to 255.");
+			// console.warn("Green value was higher than 255. It has been set to 255.");
 			g = 255;
 		} else if (g < 0) {
-			console.warn("Green value was smaller than 0. It has been set to 0.");
+			// console.warn("Green value was smaller than 0. It has been set to 0.");
 			g = 0;
 		}
 		if (b > 255) {
-			console.warn("Blue value was higher than 255. It has been set to 255.");
+			// console.warn("Blue value was higher than 255. It has been set to 255.");
 			b = 255;
 		} else if (b < 0) {
-			console.warn("Blue value was smaller than 0. It has been set to 0.");
+			// console.warn("Blue value was smaller than 0. It has been set to 0.");
 			b = 0;
 		}
 		if (a > 1) {
-			console.warn("Obacity value was higher than 1. It has been set to 1.");
+			// console.warn("Obacity value was higher than 1. It has been set to 1.");
 			a = 1;
 		} else if (a < 0) {
-			console.warn("Obacity value was smaller than 0. It has been set to 0.");
+			// console.warn("Obacity value was smaller than 0. It has been set to 0.");
 			a = 0;
 		}
 		r = r / 255;
