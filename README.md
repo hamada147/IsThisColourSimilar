@@ -1,4 +1,6 @@
 # Is This Colour Similar
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/fa33bee77e08488dab66c2d05dfeaf14)](https://www.codacy.com/gh/hamada147/IsThisColourSimilar/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hamada147/IsThisColourSimilar&amp;utm_campaign=Badge_Grade)
+
 Javascript implementation of CIE Delta E 2000 Color-Difference algorithm (CIEDE2000) as per the equation provided on this website http://www.brucelindbloom.com/index.html?Eqn_DeltaE_CIE2000.html
 
 Live Demo https://hamada147.github.io/IsThisColourSimilar/
