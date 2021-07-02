@@ -3,13 +3,13 @@ Javascript implementation of CIE Delta E 2000 Color-Difference algorithm (CIEDE2
 
 Live Demo https://hamada147.github.io/IsThisColourSimilar/
 
-# What is that?
+## What is that?
 Let me just say that there are two version of the story behing the creation of this library. Short and Long.
 
-# Short
+### Short
 I just wanted to have different background color other than the font color so they are both distinguishable by the user and the text is readable.
 
-# Long
+### Long
 I just wanted to have different background color other than the font color so they are both distinguishable by the user and the text is readable. And so my jouney begain. I stumbled upon this question which encourged me to procreed with my research on the subject.
 https://stackoverflow.com/questions/15049753/an-algorithm-for-selecting-a-dark-color-similar-to-a-light-color/49170325#49170325
 
@@ -17,7 +17,7 @@ I started reasearching with just random words regarding the colour then I stumbl
 
 First of all I would like to highlight a few points and make sure that anyone that is reading this is able to understand what I'm talking about here.
 
-# What is a Color Space?
+## What is a Color Space?
 
 A range of colors can be created by the primary colors of pigment and these colors then define a specific color space. Color space, also known as the color model (or color system), is an abstract mathematical model which simply describes the range of colors as tuples of numbers, typically as 3 or 4 values or color components (ex: RGB). Basically speaking, color space is an elaboration of the coordinate system and sub-space. Each color in the system is represented by a single dot.
 
@@ -40,11 +40,11 @@ Wither we used HEX, RGBA, CMYK or any other color space we won't be able to know
 
 But there exist other color spaces (scientific ones) that take in consideration the way our eyes see colors and how our mind interpret them. One of these are LAB.
 
-# Color Transformation
+## Color Transformation
 
 A color in one absolute color space can be converted into another absolute color space, and back again, in general; however, some color spaces may have gamut limitations, and converting colors that lie outside that gamut will not produce correct results. There are also likely to be rounding errors, especially if the popular range of only 256 distinct values per component (8-bit color) is used.
 
-# What is gamut?
+## What is gamut?
 
 In color reproduction, including computer graphics and photography, the gamut, or color gamut, is a certain complete subset of colors. The most common usage refers to the subset of colors which can be accurately represented in a given circumstance, such as within a given color space or by a certain output device.
 
@@ -53,13 +53,13 @@ Nope
 
 Let's continue on with a little bit more about the converstion between different colour spaces
 
-# HEX To RGB
+## HEX To RGB
 
 We have HEX as the color representation in hexadecimal value we just have to get their decimal values and that it, now we have our color in RGB color space.
 A = RGB(255, 0, 0) Red
 B = RGB(0, 255, 0) Green
 
-# RGB To XYZ
+## RGB To XYZ
 
 We have to follow the following mathematical law
 color = current color / 255
@@ -107,7 +107,7 @@ Z = (colorRed * 0.0193) + (colorGreen * 0.1192) + (colorBlue * 0.9505)
 A XYZ(X, Y, Z)
 ```
 
-# XYZ To LAB
+## XYZ To LAB
 
 // Reference-X, Reference-Y and Reference-Z refer to specific illuminants and observers. Check Reference Section
 ```
@@ -135,7 +135,7 @@ CIE-a* = 500 * ( X - Y )
 CIE-b* = 200 * ( Y - Z )
 ```
 
-# Reference
+## Reference
 
 Here is some list of them that I was able to find.
 //2o Observer (CIE 1931) 
@@ -180,14 +180,14 @@ CIE10_F7 = {95.792f, 100f, 107.687f}
 
 CIE10_F11 = {103.866f, 100f, 65.627f}
 
-# Distance between two colors in LAP colour Space
+## Distance between two colors in LAP colour Space
 
 Treat the color as 3d dimension like we did earlier and now we have the exact distance between the two colors with respect to the human eye.
 
 Now what do you think? Am I right?
 Correct if we are going to check the distance between two colour in the LAP colour space (48% - 50%) accurecy => I don't remember where I got this number from but it was in my notes. So, I just past it here :)
 
-# Let the Real Thing Begins
+## Let the Real Thing Begins
 
 As per more of my research on LAB Colour Space I found some intersting things.
 For short LAB is really cool
@@ -209,7 +209,7 @@ Until I finally found this article https://sensing.konicaminolta.us/blog/identif
 
 Now this, was a life changing for me. I was not really able to differeintiate between the two apples until sometime. But once I did, it's like I got hit with a bus and the I know what I'm suppose to search for. Delta E (ΔE).
 
-# ΔE - Delta E
+## ΔE - Delta E
 
 ΔE - (Delta E, dE) The measure of change in visual perception of two given colors.
 Delta E is a metric for understanding how the human eye perceives color difference. The term delta comes from mathematics, meaning change in a variable or function. The suffix E references the German word Empfindung, which broadly means sensation.
@@ -230,11 +230,11 @@ Take the table as a general guide; it’s possible to get a Delta E value below 
 
 Because of inconsistencies between the three algorithms, the exact meaning of Delta E changes slightly depending on which formula is used. Think of Delta E less as a definitive answer, and instead a helpful metric to apply to a specific use case.
 
-# Delta E 76
+## Delta E 76
 
 Is pretty much what I was trying to implement on my own so we will pass thins one. But for those who want to know it. It is the distance betweent he two colours in 3D space and it is pretty much the Euclidean Distance formula.
 
-# Delta E 94
+## Delta E 94
 
 In 1994, the original Delta E formula was improved. The new formula would take into account certain weighting factors for each lightness, chroma, and hue value.
 
@@ -242,17 +242,17 @@ In 1994, the original Delta E formula was improved. The new formula would take i
 
 Days of normal mathmatical equation has long passed.
 
-# Delta E 2000 (One used in this library)
+## Delta E 2000 (One used in this library)
 
 The CIE organization decided to fix the lightness inaccuracies by introducing dE00. It’s currently the most complicated, yet most accurate, CIE color difference algorithm available. And let me tell you. It was a pain to implement. Not because it is heard but because it had too many variables and I got lost many times trying to implemen it
 
 ![alt formula-cie2000](https://raw.githubusercontent.com/hamada147/IsThisColourSimilar/master/formula-cie00.png)
 
-# How to use
+## How to use
 
 Simple include the Colour.js file into your web page in head tag. Take two colour from the manully or auto generated. Convert them to LAB then run the deltaE00 function and see the result then check the table for understanding the meaning behind the given value.
 
-# TODO
+## TODO
 
 Create and usage example DONE
 
