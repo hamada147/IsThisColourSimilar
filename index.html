@@ -178,8 +178,8 @@
             function getDarkerColourFeature() {
                 getDarkerColourButton.addEventListener("click", function() {
                     FirstColourShowElement.style.backgroundColor = getDarkerColourColor.value;
-                    let [R1, G1, B1, A1] = Colour.HEX2RGBA(getDarkerColourColor.value);
-                    let [R2, G2, B2, A2] = Colour.GetDarkerColour(R1, G1, B1, A1);
+                    let [R1, G1, B1, A1] = Colour.hex2rgba(getDarkerColourColor.value);
+                    let [R2, G2, B2, A2] = Colour.getDarkerColour(R1, G1, B1, A1);
                     SecondColourShowElement.style.backgroundColor = `rgba(${R2}, ${G2}, ${B2}, ${A2})`;
                 });
             }
@@ -187,8 +187,8 @@
             function getBrighterColourFeature() {
                 getBrighterColourButton.addEventListener("click", function(){
                     FirstColourShowElement.style.backgroundColor = getDarkerColourColor.value;
-                    let [R1, G1, B1, A1] = Colour.HEX2RGBA(getDarkerColourColor.value);
-                    let [R2, G2, B2, A2] = Colour.GetBrighterColour(R1, G1, B1, A1);
+                    let [R1, G1, B1, A1] = Colour.hex2rgba(getDarkerColourColor.value);
+                    let [R2, G2, B2, A2] = Colour.getBrighterColour(R1, G1, B1, A1);
                     SecondColourShowElement.style.backgroundColor = `rgba(${R2}, ${G2}, ${B2}, ${A2})`;
                 });
             }
@@ -209,9 +209,9 @@
                 // init on click
                 compareButton.addEventListener("click", function() {
                     // convert HEX to LAB
-                    const [L1, A1, B1] = Colour.HEX2LAB(FirstColourInHEX, 1);
-                    const [L2, A2, B2] = Colour.HEX2LAB(SecondColourInHEX, 2);
-                    const deltaE = Colour.DeltaE00(L1, A1, B1, L2, A2, B2);
+                    const [L1, A1, B1] = Colour.hex2lab(FirstColourInHEX, 1);
+                    const [L2, A2, B2] = Colour.hex2lab(SecondColourInHEX, 2);
+                    const deltaE = Colour.deltaE00(L1, A1, B1, L2, A2, B2);
                     logElement.innerHTML += `<li class="result">DetlaE00: ${deltaE}</li>`;
                 });
             }
