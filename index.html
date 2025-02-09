@@ -1,220 +1,336 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Colour Difference</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <style media="screen">
-            html,
-            body {
-                padding: 0;
-                margin: 0;
-            }
-            h1 {
-                text-align: center;
-            }
-            .flex-column {
-                display: flex;
-                flex-direction: column;
-            }
-            .flex-column > div {
-                width: 100%;
-            }
-            .flex-column > div > button {
-                width: 100%;
-                font-size: 30px;
-            }
-            .min-height-200 {
-                min-height: 200px;
-            }
-            .min-height-80 {
-                min-height: 80px;
-            }
-            #log {
-                display: flex;
-                flex-direction: column;
-            }
-            #log > ol > li.c1 {
-                color: black;
-            }
-            #log > ol > li.c2 {
-                color: orange;
-            }
-            #log > ol > li.result {
-                color: darkgreen;
-            }
-            table {
-    			font-family: arial, sans-serif;
-    			border-collapse: collapse;
-    			width: 100%;
-    		}
-    		td, th {
-    			border: 1px solid #dddddd;
-    			text-align: left;
-    			padding: 8px;
-    		}
-    		tr:nth-child(even) {
-    			background-color: #dddddd;
-    		}
-        </style>
-        <script src="Colour.js" charset="utf-8"></script>
-    </head>
-    <body>
-        <header>
-            <h1>Colour Difference</h1>
-        </header>
-        <main>
-            <section class="flex-column">
-                <div>
-                    Kindly Find below table for your reference
-                    <table>
-                		<thead>
-                			<tr>
-                				<th>Delta E Value</th>
-                				<th>Meaning</th>
-                			</tr>
-                		</thead>
-                        <tbody>
-                            <tr>
-                                <td><= 1.0</td>
-                                <td>Not perceptible by human eyes.</td>
-                            </tr>
-                            <tr>
-                                <td>1 - 2</td>
-                                <td>Perceptible through close observation.</td>
-                            </tr>
-                            <tr>
-                                <td>2 - 10</td>
-                                <td>Perceptible at a glance.</td>
-                            </tr>
-                            <tr>
-                                <td>11 - 49</td>
-                                <td>Colors are more similar than opposite.</td>
-                            </tr>
-                            <tr>
-                                <td>100</td>
-                                <td>Colors are exact opposite.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <label for="first-colour">First Colour</label>
-                    <input type="color" id="first-colour" name="first-colour" placeholder="first colour" value="#FFFFFF"/>
-                </div>
-                <div>
-                    <label for="second-colour">Second Colour</label>
-                    <input type="color" id="second-colour" name="second-colour" placeholder="second colour" value="#FFFFFF"/>
-                </div>
-                <div>
-                    <button type="button" id="Compare" name="Compare">Compare</button>
-                </div>
-                <!-- get darker colour -->
-                <div>
-                    <label for="get-darker-colour">Get Darker colour of this colour</label>
-                    <input type="color" id="get-darker-colour" name="colour" placeholder="colour" value="#000000"/>
-                </div>
-                <div>
-                    <button type="button" id="getDarkerColour" name="getDarkerColour">Get Darker Colour</button>
-                </div>
-                <div>
-                    <button type="button" id="getBrighterColour" name="getBrighterColour">Get Brighter Colour</button>
-                </div>
-            </section>
-            <section class="flex-column">
-                <div id="fcolour" class="first-colour min-height-80">
+<head>
+	<meta charset="utf-8">
+	<title>Is This Colour Similar</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style media="screen">
+		:root {
+			--primary: #4a90e2;
+			--secondary: #50e3c2;
+			--background: #f5f7fa;
+			--text: #2c3e50;
+			--border: #dfe6e9;
+		}
 
-                </div>
-                <div id="scolour" class="second-colour min-height-80">
+		* {
+			box-sizing: border-box;
+			transition: all 0.2s ease;
+		}
 
-                </div>
-            </section>
-            <section id="log">
-                <ol></ol>
-            </section>
-        </main>
-        <footer>
+		body {
+			font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+			line-height: 1.6;
+			padding: 1rem;
+			margin: 0;
+			background: var(--background);
+			color: var(--text);
+		}
 
-        </footer>
-        <script type="text/javascript">
-            'use strict';
-            // Values
-            let FirstColourInHEX, SecondColourInHEX;
-            // Elements
-            let FirstColourElement, SecondColourElement;
-            let FirstColourShowElement, SecondColourShowElement;
-            let logElement;
-            let compareButton;
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
 
-            // new feature
-            let getDarkerColourButton;
-            let getBrighterColourButton;
-            let getDarkerColourColor;
+		header {
+			text-align: center;
+			padding: 2rem 0;
+			background: linear-gradient(135deg, var(--primary), var(--secondary));
+			color: white;
+			margin: -1rem -1rem 2rem;
+			box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+		}
 
-            window.onload = function() {
-                init();
-                compareFeature();
-                getDarkerColourFeature();
-                getBrighterColourFeature();
-            };
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 2rem;
+			margin-bottom: 2rem;
+		}
 
-            function init() {
-                // init elements
-                FirstColourElement      = document.getElementById("first-colour");
-                FirstColourShowElement  = document.getElementById("fcolour");
-                SecondColourElement     = document.getElementById("second-colour");
-                SecondColourShowElement = document.getElementById("scolour");
-                getDarkerColourColor    = document.getElementById("get-darker-colour");
-                // init compare button
-                compareButton = document.getElementById("Compare");
-                // init darket colour button
-                getDarkerColourButton = document.getElementById("getDarkerColour");
-                // init brighter colour button
-                getBrighterColourButton = document.getElementById("getBrighterColour");
-                // log element
-                logElement = document.getElementById("log").children[0];
-            }
+		.card {
+			background: white;
+			padding: 1.5rem;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+			border: 1px solid var(--border);
+		}
 
-            function getDarkerColourFeature() {
-                getDarkerColourButton.addEventListener("click", function() {
-                    FirstColourShowElement.style.backgroundColor = getDarkerColourColor.value;
-                    let [R1, G1, B1, A1] = Colour.hex2rgba(getDarkerColourColor.value);
-                    let [R2, G2, B2, A2] = Colour.getDarkerColour(R1, G1, B1, A1);
-                    SecondColourShowElement.style.backgroundColor = `rgba(${R2}, ${G2}, ${B2}, ${A2})`;
-                });
-            }
+		.color-preview {
+			height: 100px;
+			border-radius: 8px;
+			margin: 1rem 0;
+			border: 2px solid var(--border);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+			text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+		}
 
-            function getBrighterColourFeature() {
-                getBrighterColourButton.addEventListener("click", function(){
-                    FirstColourShowElement.style.backgroundColor = getDarkerColourColor.value;
-                    let [R1, G1, B1, A1] = Colour.hex2rgba(getDarkerColourColor.value);
-                    let [R2, G2, B2, A2] = Colour.getBrighterColour(R1, G1, B1, A1);
-                    SecondColourShowElement.style.backgroundColor = `rgba(${R2}, ${G2}, ${B2}, ${A2})`;
-                });
-            }
+		input[type="color"] {
+			width: 100%;
+			height: 40px;
+			border: 2px solid var(--border);
+			border-radius: 6px;
+			padding: 0;
+			cursor: pointer;
+		}
 
-            function compareFeature() {
-                // init the default value for element, variables and show element
-                FirstColourInHEX = FirstColourElement.value;
-                SecondColourInHEX = SecondColourElement.value;
-                // init the on change value functions
-                FirstColourElement.onchange = function() {
-                    FirstColourInHEX = this.value;
-                    FirstColourShowElement.style.backgroundColor = this.value;
-                };
-                SecondColourElement.onchange = function() {
-                    SecondColourInHEX = this.value;
-                    SecondColourShowElement.style.backgroundColor = this.value;
-                };
-                // init on click
-                compareButton.addEventListener("click", function() {
-                    // convert HEX to LAB
-                    const [L1, A1, B1] = Colour.hex2lab(FirstColourInHEX, 1);
-                    const [L2, A2, B2] = Colour.hex2lab(SecondColourInHEX, 2);
-                    const deltaE = Colour.deltaE00(L1, A1, B1, L2, A2, B2);
-                    logElement.innerHTML += `<li class="result">DetlaE00: ${deltaE}</li>`;
-                });
-            }
-        </script>
-    </body>
+		button {
+			background: var(--primary);
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 1rem;
+			width: 100%;
+			margin: 0.5rem 0;
+		}
+
+		button:hover {
+			opacity: 0.9;
+			transform: translateY(-1px);
+		}
+
+		input[type="range"] {
+			width: 100%;
+			margin: 1rem 0;
+			accent-color: var(--primary);
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			background: white;
+			border-radius: 8px;
+			overflow: hidden;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+		}
+
+		th, td {
+			padding: 12px 15px;
+			text-align: left;
+			border-bottom: 1px solid var(--border);
+		}
+
+		th {
+			background: var(--primary);
+			color: white;
+		}
+
+		tr:nth-child(even) {
+			background-color: #f8f9fa;
+		}
+
+		#log ol {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		#log li {
+			padding: 1rem;
+			margin: 0.5rem 0;
+			background: white;
+			border-radius: 6px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		}
+
+		.result {
+			color: var(--primary);
+			font-weight: bold;
+		}
+
+		footer {
+			text-align: center;
+			padding: 2rem 0;
+			color: #7f8c8d;
+		}
+
+		@media (max-width: 768px) {
+			.grid {
+				grid-template-columns: 1fr;
+			}
+
+			header h1 {
+				font-size: 1.5rem;
+			}
+		}
+	</style>
+	<script src="Colours.min.js" charset="utf-8"></script>
+</head>
+<body>
+<header>
+	<div class="container">
+		<h1>🎨 Advanced Color Analysis Tool 🎨<br/>Is This Colour Similar</h1>
+	</div>
+</header>
+
+<main class="container">
+	<div class="grid">
+		<!-- Reference Table -->
+		<section class="card">
+			<h2>Delta E Interpretation Guide</h2>
+			<table>
+				<thead>
+				<tr>
+					<th>ΔE Value</th>
+					<th>Perception</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td>≤ 1.0</td>
+					<td>Imperceptible to human eye</td>
+				</tr>
+				<tr>
+					<td>1 - 2</td>
+					<td>Noticeable on close inspection</td>
+				</tr>
+				<tr>
+					<td>2 - 10</td>
+					<td>Visible at a glance</td>
+				</tr>
+				<tr>
+					<td>11 - 49</td>
+					<td>Clearly different but related</td>
+				</tr>
+				<tr>
+					<td>100</td>
+					<td>Exact opposites</td>
+				</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<!-- Color Comparison Section -->
+		<section class="card">
+			<h2>Color Comparison</h2>
+			<div class="color-control">
+				<label for="first-colour">Base Color</label>
+				<input type="color" id="first-colour" value="#4a90e2">
+				<div id="fcolour" class="color-preview"></div>
+			</div>
+
+			<div class="color-control">
+				<label for="second-colour">Compare Color</label>
+				<input type="color" id="second-colour" value="#50e3c2">
+				<div id="scolour" class="color-preview"></div>
+			</div>
+
+			<button id="Compare">Calculate ΔE Difference</button>
+		</section>
+
+		<!-- Color Adjustment Section -->
+		<section class="card">
+			<h2>Color Adjustment</h2>
+			<div class="color-control">
+				<label for="get-darker-colour">Base Color</label>
+				<input type="color" id="get-darker-colour" value="#000000">
+				<div class="color-preview" id="adjustPreview"></div>
+			</div>
+
+			<label for="factor">Adjustment Intensity: <span id="factorValue">0.2</span></label>
+			<input id="factor" type="range" min="0" max="1" step="0.01" value="0.2">
+
+			<div class="button-group">
+				<button id="getDarkerColour">Darken Color</button>
+				<button id="getBrighterColour">Brighten Color</button>
+			</div>
+		</section>
+	</div>
+
+	<!-- Results Log -->
+	<section class="card">
+		<h2>Analysis Results</h2>
+		<div id="log">
+			<ol></ol>
+		</div>
+	</section>
+</main>
+
+<footer>
+	<div class="container">
+		<p>Color ΔE 2000 Implementation • Built with ❤️ By <a href="https://github.com/hamada147">Ahmed Moussa</a></p>
+	</div>
+</footer>
+
+<script type="text/javascript">
+	'use strict';
+	// Updated initialization and event handlers
+	document.addEventListener('DOMContentLoaded', () => {
+		const elements = {
+			firstColor: document.getElementById('first-colour'),
+			secondColor: document.getElementById('second-colour'),
+			adjustColor: document.getElementById('get-darker-colour'),
+			factor: document.getElementById('factor'),
+			factorValue: document.getElementById('factorValue'),
+			previews: {
+				first: document.getElementById('fcolour'),
+				second: document.getElementById('scolour'),
+				adjust: document.getElementById('adjustPreview')
+			},
+			log: document.getElementById('log').querySelector('ol')
+		};
+
+		// Initialize color displays
+		const updateColorDisplays = () => {
+			elements.previews.first.style.backgroundColor = elements.firstColor.value;
+			elements.previews.second.style.backgroundColor = elements.secondColor.value;
+			elements.previews.adjust.style.backgroundColor = elements.adjustColor.value;
+			elements.previews.first.textContent = elements.firstColor.value;
+			elements.previews.second.textContent = elements.secondColor.value;
+			elements.previews.adjust.textContent = elements.adjustColor.value;
+		};
+
+		// Event Listeners
+		elements.firstColor.addEventListener('input', updateColorDisplays);
+		elements.secondColor.addEventListener('input', updateColorDisplays);
+		elements.adjustColor.addEventListener('input', updateColorDisplays);
+		elements.factor.addEventListener('input', () => {
+			elements.factorValue.textContent = elements.factor.value;
+		});
+
+		// Compare Colors
+		document.getElementById('Compare').addEventListener('click', () => {
+			const color1 = Colour.hex2lab(elements.firstColor.value);
+			const color2 = Colour.hex2lab(elements.secondColor.value);
+			const deltaE = Colour.deltaE00(color1, color2).toFixed(2);
+
+			const entry = document.createElement('li');
+			entry.className = 'result';
+			entry.innerHTML = `
+                    ΔE00: <strong>${deltaE}</strong>
+                    <span style="color:${elements.firstColor.value}">■</span> vs
+                    <span style="color:${elements.secondColor.value}">■</span>
+                `;
+			elements.log.prepend(entry);
+		});
+
+		// Color Adjustment Functions
+		const handleAdjustment = (direction) => {
+			const [R, G, B, A] = Colour.hex2rgba(elements.adjustColor.value);
+			const factor = direction === 'darken' ?
+					-Math.abs(elements.factor.value) :
+					Math.abs(elements.factor.value);
+
+			const adjusted = Colour.adjustLightness(R, G, B, A, factor);
+			elements.previews.adjust.style.backgroundColor =
+					`rgba(${adjusted.join(',')})`;
+			elements.previews.adjust.textContent =
+					`rgba(${adjusted.map(n => n.toFixed(0)).join(', ')})`;
+		};
+
+		document.getElementById('getDarkerColour').addEventListener('click',
+				() => handleAdjustment('darken'));
+		document.getElementById('getBrighterColour').addEventListener('click',
+				() => handleAdjustment('brighten'));
+
+		// Initial display update
+		updateColorDisplays();
+	});
+</script>
+</body>
 </html>
