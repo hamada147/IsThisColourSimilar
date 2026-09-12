@@ -1,26 +1,67 @@
 {
   "name": "isthiscoloursimilar",
-  "version": "1.0.0",
-  "description": "",
-  "main": "oldColourImplementation.js",
+  "version": "3.0.1",
+  "description": "A JavaScript/TypeScript implementation of CIEDE2000 (Delta E 2000) colour difference and colour-space conversions.",
+  "main": "Colours.js",
+  "types": "Colours.d.ts",
   "scripts": {
     "build": "tsc && esbuild Colours.js --minify --keep-names --outfile=Colours.min.js --sourcemap",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "npm run build",
+    "test": "node --test",
+    "pretest:ci": "npm run build",
+    "test:ci": "mkdir -p allure-results && c8 node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=allure-results/junit.xml",
+    "precoverage": "npm run build",
+    "coverage": "c8 node --test",
+    "report": "allure generate allure-results --clean -o allure-report",
+    "report:open": "allure open allure-report",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
+    "format": "biome format --write",
+    "prepublishOnly": "npm run lint && npm test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hamada147/IsThisColourSimilar.git"
   },
-  "keywords": [],
+  "keywords": [
+    "ciede2000",
+    "delta-e",
+    "deltae",
+    "color-difference",
+    "colour-difference",
+    "cielab",
+    "lab",
+    "color",
+    "colour",
+    "color-space",
+    "perceptual"
+  ],
   "author": "Ahmed Moussa <moussa.ahmed95@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "Colours.js",
+    "Colours.js.map",
+    "Colours.min.js",
+    "Colours.min.js.map",
+    "Colours.d.ts",
+    "Colours.d.ts.map",
+    "Colours.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "bugs": {
     "url": "https://github.com/hamada147/IsThisColourSimilar/issues"
   },
   "homepage": "https://github.com/hamada147/IsThisColourSimilar#readme",
   "devDependencies": {
-    "esbuild": "0.25.0",
-    "typescript": "^5.7.3"
+    "@biomejs/biome": "^2.5.13",
+    "allure-commandline": "^2.43.0",
+    "c8": "^12.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
   }
 }

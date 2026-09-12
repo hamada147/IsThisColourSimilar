@@ -1,0 +1,12 @@
+# Normalize line endings to LF on checkin, auto on checkout.
+* text=auto eol=lf
+
+# Generated build artifacts: keep them tracked (served via jsDelivr) but mark as
+# generated so GitHub collapses their diffs and excludes them from language stats.
+Colours.js       linguist-generated=true
+Colours.min.js   linguist-generated=true
+Colours.d.ts     linguist-generated=true
+*.map            linguist-generated=true
+
+# Binary assets — never touch line endings.
+*.png binary

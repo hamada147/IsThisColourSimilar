@@ -1,7 +1,9 @@
 # Is This Colour Similar? 🎨
 
+[![CI](https://github.com/hamada147/IsThisColourSimilar/actions/workflows/ci.yml/badge.svg)](https://github.com/hamada147/IsThisColourSimilar/actions/workflows/ci.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/fa33bee77e08488dab66c2d05dfeaf14)](https://app.codacy.com/gh/hamada147/IsThisColourSimilar/dashboard)
 [![Live Demo](https://img.shields.io/badge/demo-live-green.svg)](https://hamada147.github.io/IsThisColourSimilar/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 A JavaScript implementation of CIEDE2000 - the most accurate color difference algorithm for human perception.
 
@@ -9,8 +11,8 @@ A JavaScript implementation of CIEDE2000 - the most accurate color difference al
 
 - 🎯 **Precise Color Comparisons** using Delta E 2000 (CIEDE2000)
 - 🔄 **Color Space Conversions**:
-    - HEX ↔ RGB ↔ XYZ ↔ CIELAB
-    - Supports alpha channels
+  - HEX ↔ RGB ↔ XYZ ↔ CIELAB
+  - Supports alpha channels
 - 📊 **Perceptual Difference Metrics** with human-readable interpretations
 - 🛠 **Color Adjustment Tools** for lightening/darkening colors
 - 📱 **Zero Dependencies** - works in browsers and Node.js
@@ -22,7 +24,9 @@ A JavaScript implementation of CIEDE2000 - the most accurate color difference al
 ```html
 <script src="https://cdn.jsdelivr.net/gh/hamada147/IsThisColourSimilar@master/Colours.js"></script>
 ```
+
 OR use the minified version
+
 ```html
 <script src="https://cdn.jsdelivr.net/gh/hamada147/IsThisColourSimilar@master/Colours.min.js"></script>
 ```
@@ -38,7 +42,16 @@ const lab2 = Colour.hex2lab('#cc0000');
 const deltaE = Colour.deltaE00(lab1, lab2);
 
 console.log(`Color difference: ${deltaE.toFixed(2)}`);
-// Output: Color difference: 14.72 (Perceptible at a glance)
+// Output: Color difference: 11.00 (Distinct but related colors)
+```
+
+### Node.js
+
+```javascript
+const Colour = require('isthiscoloursimilar'); // or require('./Colours.js')
+
+const deltaE = Colour.deltaE00(Colour.hex2lab('#ff0000'), Colour.hex2lab('#cc0000'));
+console.log(deltaE.toFixed(2)); // 11.00
 ```
 
 ## API Reference
@@ -53,7 +66,7 @@ Convert HEX to CIELAB color space
 const [L, a, b] = Colour.hex2lab('#FF5733');
 ```
 
-`deltaE00(lab1: number[], lab2: number[]): number`
+`deltaE00(lab1: [number, number, number], lab2: [number, number, number]): number`
 
 Calculate Delta E 2000 difference
 
@@ -71,7 +84,7 @@ const darkerRed = Colour.adjustLightness(255, 0, 0, 1, -0.2);
 
 ### Conversion Methods
 
-| Method     | Description	              | I/O Format                   |
+| Method     | Description               | I/O Format                   |
 |------------|---------------------------|------------------------------|
 | hex2rgba() | HEX to RGBA conversion    | `#RRGGBB` → `[R, G, B, A]`   |
 | rgba2lab() | RGBA to CIELAB conversion | `[R, G, B, A]` → `[L, a, b]` |
@@ -93,10 +106,10 @@ const darkerRed = Colour.adjustLightness(255, 0, 0, 1, -0.2);
 
 Traditional color difference metrics like RGB Euclidean distance don't match human vision. CIEDE2000:
 
-* Accounts for human visual perception nuances
-* Compensates for lightness/hue interactions
-* Weighted for color region differences
-* Industry standard for color-critical applications
+- Accounts for human visual perception nuances
+- Compensates for lightness/hue interactions
+- Weighted for color region differences
+- Industry standard for color-critical applications
 
 ![CIEDE2000 Equation](./formula-cie00.png)
 
@@ -108,15 +121,32 @@ Traditional color difference metrics like RGB Euclidean distance don't match hum
 git clone https://github.com/hamada147/IsThisColourSimilar.git
 cd IsThisColourSimilar
 npm install
+npm run build
 ```
+
+### Testing
+
+The test suite validates `deltaE00` against **all 34 official reference pairs** from
+Sharma, Wu & Dalal (the CIEDE2000 implementation-notes paper), plus the colour-space
+conversions — run against both the readable and minified builds.
+
+```shell
+npm test              # build + run the full suite (node:test, zero runtime deps)
+npm run coverage      # same, with c8 line/branch coverage in ./coverage
+npm run test:ci       # coverage + JUnit results for Allure (./allure-results)
+npm run report        # generate the Allure report into ./allure-report (needs Java)
+```
+
+CI (GitHub Actions) runs the suite with coverage and publishes the coverage and
+Allure reports as build artifacts on every push and pull request.
 
 ### Browser Demo
 
 Open `index.html` in any modern browser for interactive examples:
 
-* Color difference comparisons
-* Lightness adjustment tool
-* Real-time conversions
+- Color difference comparisons
+- Lightness adjustment tool
+- Real-time conversions
 
 ## Story behind this
 
@@ -162,7 +192,7 @@ know that each one these values are a number representation of its value (0-9) t
 
 EX:-
 
-```
+```text
 A = (R1 = FF, G1 = 00, B1 = 00)
 B = (R2 = 00, G2 = FF, B2 = 00)
 We have our two point here, now we can use Euclidean law
@@ -202,7 +232,7 @@ Let's continue on with a little bit more about the conversion between different 
 We have HEX as the color representation in hexadecimal value we just have to get their decimal values and that it, now
 we have our color in RGB color space.
 
-```
+```text
 A = RGB(255, 0, 0) Red
 B = RGB(0, 255, 0) Green
 ```
@@ -211,7 +241,7 @@ B = RGB(0, 255, 0) Green
 
 We have to follow the following mathematical law
 
-```
+```text
 color = current color / 255
 if color > 0.04045
 color = ( ( color + 0.055 ) / 1.055 ) ^ 2.4
@@ -228,7 +258,7 @@ That' it
 
 EX:-
 
-```
+```text
 A = RGB(255, 0, 0) Red
 colorRed   = 255/255
 colorGreen = 0/255
@@ -264,7 +294,7 @@ A XYZ(X, Y, Z)
 
 // Reference-X, Reference-Y and Reference-Z refer to specific illuminates and observers. Check Reference Section
 
-```
+```text
 X = X / Reference-X
 Y = Y / Reference-Y
 Z = Z / Reference-Z
@@ -293,7 +323,7 @@ CIE-b* = 200 * ( Y - Z )
 
 Here is some list of them that I was able to find.
 
-```
+```text
 // 2o Observer (CIE 1931)
 // X2, Y2, Z2
 CIE2_A = {109.850f, 100f, 35.585f} // Incandescent
@@ -333,9 +363,9 @@ remember where I got this number from but it was in my notes. So, I just past it
 As per more of my research on LAB Colour Space I found some interesting things.
 For short LAB is really cool
 For long
-The CIELAB color space (also known as CIE L*a*b* or sometimes abbreviated as simply "Lab" color space) is a color space
+The CIELAB color space (also known as CIE L*a*b*or sometimes abbreviated as simply "Lab" color space) is a color space
 defined by the International Commission on Illumination (CIE) in 1976. It expresses color as three numerical values, L*
-for the lightness and a* and b* for the green–red and blue–yellow color components. CIELAB was designed to be
+for the lightness and a*and b* for the green–red and blue–yellow color components. CIELAB was designed to be
 perceptually uniform with respect to human color vision, meaning that the same amount of numerical change in these
 values corresponds to about the same amount of visually perceived change.
 
@@ -346,11 +376,11 @@ gamuts of the RGB and CMYK color models.
 
 The space itself is a three-dimensional real number space, allowing an infinite number of possible representations of
 colors. In practice, the space is usually mapped onto a three-dimensional integer space for digital representation, and
-thus the L*, a*, and b* values are usually absolute, with a pre-defined range. The lightness value, L*, represents the
-darkest black at L* = 0, and the brightest white at L* = 100. The color channels, a* and b*, represent true neutral gray
-values at a* = 0 and b* = 0. The a* axis represents the green–red component, with green in the negative direction and
+thus the L*, a*, and b*values are usually absolute, with a pre-defined range. The lightness value, L*, represents the
+darkest black at L*= 0, and the brightest white at L* = 100. The color channels, a*and b*, represent true neutral gray
+values at a*= 0 and b* = 0. The a*axis represents the green–red component, with green in the negative direction and
 red in the positive direction. The b* axis represents the blue–yellow component, with blue in the negative direction and
-yellow in the positive direction. The scaling and limits of the a* and b* axes will depend on the specific
+yellow in the positive direction. The scaling and limits of the a*and b* axes will depend on the specific
 implementation, as described below, but they often run in the range of ±100 or −128 to +127 (signed 8-bit integer).
 
 Pretty cool, right?
@@ -403,14 +433,18 @@ is the distance betweent he two colours in 3D space and it is pretty much the Eu
 In 1994, the original Delta E formula was improved. The new formula would take into account certain weighting factors
 for each lightness, chroma, and hue value.
 
-![alt formula-cie94](https://raw.githubusercontent.com/hamada147/IsThisColourSimilar/master/formula-cie94.png)
+![alt formula-cie94](./formula-cie94.png)
 
 Days of normal mathmatical equation has long passed.
 
-#### Delta E 2000 (One used in this library)
+### Delta E 2000 (One used in this library)
 
 The CIE organization decided to fix the lightness inaccuracies by introducing dE00. It’s currently the most complicated,
 yet most accurate, CIE color difference algorithm available. And let me tell you. It was a pain to implement. Not
 because it is heard but because it had too many variables and I got lost many times trying to implemen it
 
-![alt formula-cie2000](https://raw.githubusercontent.com/hamada147/IsThisColourSimilar/master/formula-cie00.png)
+![alt formula-cie2000](./formula-cie00.png)
+
+## License
+
+Released under the [MIT License](./LICENSE) © 2018-2026 Ahmed Moussa.

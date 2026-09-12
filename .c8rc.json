@@ -1,0 +1,7 @@
+{
+  "include": ["Colours.js", "Colours.ts"],
+  "exclude": ["Colours.min.js", "test/**", "**/*.d.ts"],
+  "reporter": ["text", "lcov", "html"],
+  "reports-dir": "coverage",
+  "all": true
+}

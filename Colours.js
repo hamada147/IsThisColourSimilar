@@ -3,7 +3,7 @@
  * Colour class with accurate color space conversions (CIELAB D65) and Delta E 2000
  * Supports HEX (3, 4, 6, 8 digits), RGB, XYZ, and LAB conversions.
  * @author Ahmed Moussa <moussa.ahmed95@gmail.com>
- * @version 3.0
+ * @version 3.0.1
  */
 class Colour {
     /**
@@ -19,7 +19,9 @@ class Colour {
      * Convert RGBA to LAB color space
      * @returns [L, a, b] tuple
      */
-    static rgba2lab(r, g, b, a) {
+    static rgba2lab(r, g, b, 
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: alpha is accepted for RGBA API symmetry; the LAB conversion does not use it.
+    a) {
         const [x, y, z] = Colour.rgb2xyz(r, g, b);
         return Colour.xyz2lab(x, y, z);
     }
@@ -44,39 +46,46 @@ class Colour {
         }
         let expanded = normalized;
         if ([3, 4].includes(normalized.length)) {
-            expanded = normalized.split("").map((c) => c + c).join("");
+            expanded = normalized
+                .split("")
+                .map((c) => c + c)
+                .join("");
         }
         const parsed = parseInt(expanded, 16);
-        let r, g, b, a = 1;
+        let r;
+        let g;
+        let b;
+        let a = 1;
         if (expanded.length === 8) {
-            a = ((parsed & 0xFF) / 255);
-            r = (parsed >> 16) & 0xFF;
-            g = (parsed >> 8) & 0xFF;
-            b = parsed & 0xFF;
+            // #RRGGBBAA: R is the most-significant byte, A the least. Use unsigned
+            // shifts (>>>) so the top byte survives values above 0x7FFFFFFF.
+            a = (parsed & 0xff) / 255;
+            r = (parsed >>> 24) & 0xff;
+            g = (parsed >>> 16) & 0xff;
+            b = (parsed >>> 8) & 0xff;
         }
         else {
-            r = (parsed >> 16) & 0xFF;
-            g = (parsed >> 8) & 0xFF;
-            b = parsed & 0xFF;
+            r = (parsed >> 16) & 0xff;
+            g = (parsed >> 8) & 0xff;
+            b = parsed & 0xff;
         }
         return [
             Math.min(255, Math.max(0, r)),
             Math.min(255, Math.max(0, g)),
             Math.min(255, Math.max(0, b)),
-            Math.min(1, Math.max(0, a))
+            Math.min(1, Math.max(0, a)),
         ];
     }
     /**
      * Convert RGB to XYZ color space
      */
     static rgb2xyz(r, g, b) {
-        const linearize = (c) => c > 0.04045 ? Math.pow((c + 0.055) / 1.055, 2.4) : c / 12.92;
-        const [lr, lg, lb] = [r / 255, g / 255, b / 255]
-            .map((c) => linearize(c) * 100);
+        const linearize = (c) => c > 0.04045 ? ((c + 0.055) / 1.055) ** 2.4 : c / 12.92;
+        const [lr, lg, lb] = [r / 255, g / 255, b / 255].map((c) => linearize(c) * 100);
         return [
             lr * 0.4124564 + lg * 0.3575761 + lb * 0.1804375,
-            lr * 0.2126729 + lg * 0.7151522 + lb * 0.0721750,
-            lr * 0.0193339 + lg * 0.1191920 + lb * 0.9503041
+            lr * 0.2126729 + lg * 0.7151522 + lb * 0.072175,
+            lr * 0.0193339 + lg * 0.119192 + lb * 0.9503041,
         ];
     }
     /**
@@ -84,12 +93,12 @@ class Colour {
      */
     static xyz2rgba(x, y, z) {
         const normalize = (c) => {
-            c = c > 0.0031308 ? 1.055 * Math.pow(c, 1 / 2.4) - 0.055 : 12.92 * c;
+            c = c > 0.0031308 ? 1.055 * c ** (1 / 2.4) - 0.055 : 12.92 * c;
             return Math.round(Math.min(255, Math.max(0, c * 255)));
         };
         const xyz = [x / 100, y / 100, z / 100];
         const r = xyz[0] * 3.2404542 + xyz[1] * -1.5371385 + xyz[2] * -0.4985314;
-        const g = xyz[0] * -0.9692660 + xyz[1] * 1.8760108 + xyz[2] * 0.0415560;
+        const g = xyz[0] * -0.969266 + xyz[1] * 1.8760108 + xyz[2] * 0.041556;
         const b = xyz[0] * 0.0556434 + xyz[1] * -0.2040259 + xyz[2] * 1.0572252;
         return [normalize(r), normalize(g), normalize(b)];
     }
@@ -97,15 +106,11 @@ class Colour {
      * Convert XYZ to LAB color space
      */
     static xyz2lab(x, y, z) {
-        const f = (t) => t > 0.008856 ? Math.pow(t, 1 / 3) : (7.787 * t) + (16 / 116);
+        const f = (t) => t > 0.008856 ? t ** (1 / 3) : 7.787 * t + 16 / 116;
         const fx = f(x / Colour.REF_X);
         const fy = f(y / Colour.REF_Y);
         const fz = f(z / Colour.REF_Z);
-        return [
-            116 * fy - 16,
-            500 * (fx - fy),
-            200 * (fy - fz)
-        ];
+        return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
     }
     /**
      * Convert LAB to XYZ color space
@@ -114,11 +119,11 @@ class Colour {
         const y = (l + 16) / 116;
         const x = a / 500 + y;
         const z = y - b / 200;
-        const inverseF = (t) => t > 0.2068966 ? Math.pow(t, 3) : (t - 16 / 116) / 7.787;
+        const inverseF = (t) => t > 0.2068966 ? t ** 3 : (t - 16 / 116) / 7.787;
         return [
             inverseF(x) * Colour.REF_X,
             inverseF(y) * Colour.REF_Y,
-            inverseF(z) * Colour.REF_Z
+            inverseF(z) * Colour.REF_Z,
         ];
     }
     /**
@@ -142,8 +147,14 @@ class Colour {
         const a2p = a2 * (1 + G);
         const C1p = Math.sqrt(a1p ** 2 + b1 ** 2);
         const C2p = Math.sqrt(a2p ** 2 + b2 ** 2);
-        const h1p = (b1 === 0 && a1p === 0) ? 0 : rad2deg(Math.atan2(b1, a1p)) % 360;
-        const h2p = (b2 === 0 && a2p === 0) ? 0 : rad2deg(Math.atan2(b2, a2p)) % 360;
+        // atan2 returns (-180°, 180°]; per Sharma et al. note 1 (eq. 7) negative hue
+        // angles must be normalized into [0°, 360°) before use.
+        const h1p = b1 === 0 && a1p === 0
+            ? 0
+            : ((rad2deg(Math.atan2(b1, a1p)) % 360) + 360) % 360;
+        const h2p = b2 === 0 && a2p === 0
+            ? 0
+            : ((rad2deg(Math.atan2(b2, a2p)) % 360) + 360) % 360;
         // Step 3: Calculate ΔL', ΔC', ΔH'
         const Lp = L2 - L1;
         const Cp = C2p - C1p;
@@ -165,15 +176,18 @@ class Colour {
         if (Math.abs(h1p - h2p) > 180) {
             avghp += 180;
         }
-        const T = 1 - 0.17 * Math.cos(deg2rad(avghp - 30))
-            + 0.24 * Math.cos(deg2rad(2 * avghp))
-            + 0.32 * Math.cos(deg2rad(3 * avghp + 6))
-            - 0.2 * Math.cos(deg2rad(4 * avghp - 63));
+        const T = 1 -
+            0.17 * Math.cos(deg2rad(avghp - 30)) +
+            0.24 * Math.cos(deg2rad(2 * avghp)) +
+            0.32 * Math.cos(deg2rad(3 * avghp + 6)) -
+            0.2 * Math.cos(deg2rad(4 * avghp - 63));
         const SL = 1 + (0.015 * (avgLp - 50) ** 2) / Math.sqrt(20 + (avgLp - 50) ** 2);
         const SC = 1 + 0.045 * avgCp;
         const SH = 1 + 0.015 * avgCp * T;
         // Step 5: Calculate rotation term
-        const θ = 30 * Math.exp(((-((avghp - 275) / 25)) ** 2));
+        // eq. 16: Δθ = 30·exp{ -[(h̄' - 275)/25]² }. The exponent must be negated
+        // AFTER squaring; (-x)**2 would drop the sign and invert the result.
+        const θ = 30 * Math.exp(-(((avghp - 275) / 25) ** 2));
         const RC = 2 * Math.sqrt(avgCp ** 7 / (avgCp ** 7 + 25 ** 7));
         const RT = -RC * Math.sin(deg2rad(2 * θ));
         // Final calculation
@@ -188,11 +202,19 @@ class Colour {
     static adjustLightness(r, g, b, a, factor) {
         const [l, labA, labB] = Colour.rgba2lab(r, g, b, a);
         const adjusted = Math.min(100, Math.max(0, l + l * factor));
-        return [...Colour.lab2rgba(adjusted, labA, labB)];
+        const [nr, ng, nb] = Colour.lab2rgba(adjusted, labA, labB);
+        return [nr, ng, nb, a];
     }
 }
 // D65 reference values for 2° observer (CIELAB)
 Colour.REF_X = 95.047;
 Colour.REF_Y = 100.0;
 Colour.REF_Z = 108.883;
+// Expose the class for CommonJS/Node (e.g. `const Colour = require("./Colours.js")`).
+// In a browser <script> tag `module` is undefined, so the global `Colour` binding
+// is used unchanged and this block is skipped. `@ts-expect-error` keeps the ambient
+// `module` reference out of the generated .d.ts (avoids clashing with @types/node).
+// @ts-expect-error
+if (typeof module !== "undefined" && module.exports)
+    module.exports = Colour;
 //# sourceMappingURL=Colours.js.map

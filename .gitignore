@@ -1,3 +1,41 @@
-.idea
-node_modules
-package-lock.json
+# Dependencies
+node_modules/
+
+# Logs & debug output
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Test & coverage output
+coverage/
+.nyc_output/
+
+# Allure report output
+allure-results/
+allure-report/
+.allure/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# Editors & IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# NOTE: the compiled library (Colours.js, Colours.min.js, *.d.ts, *.map) and
+# package-lock.json are intentionally committed — the build artifacts are served
+# directly over jsDelivr and the lockfile pins the toolchain for reproducible builds.

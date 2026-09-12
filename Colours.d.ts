@@ -2,7 +2,7 @@
  * Colour class with accurate color space conversions (CIELAB D65) and Delta E 2000
  * Supports HEX (3, 4, 6, 8 digits), RGB, XYZ, and LAB conversions.
  * @author Ahmed Moussa <moussa.ahmed95@gmail.com>
- * @version 3.0
+ * @version 3.0.1
  */
 declare class Colour {
     private static readonly REF_X;
